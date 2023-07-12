@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Todos } from './assets/components/Todos/Todos'
-import { type Todo as TodoType, type TodoId } from './types'
+import { type Todo as TodoType, type TodoId, type FilterValue } from './types'
+import { TODO_FILTERS } from './consts'
+import { Footer } from './assets/components/Footer/footer'
 
 const mockTodos = [
   {
@@ -22,6 +24,7 @@ const mockTodos = [
 
 const App = (): JSX.Element => {
   const [todos, setTodos] = useState(mockTodos)
+  const [filterSelected, setFilterSelected] = useState<FilterValue>(TODO_FILTERS.ALL)
 
   const handleRemove = ({ id }: TodoId): void => {
     const newTodos = todos.filter(todo => todo.id !== id)
@@ -43,11 +46,25 @@ const App = (): JSX.Element => {
     setTodos(newTodos)
   }
 
+  const handleFilterChange = (filter: FilterValue): void => {
+    setFilterSelected(filter)
+  }
+
+  const activeCount = todos.filter(todo => !todo.completed).length
+
   return ( // Creamos el componenet i nos falta el import luego
     <div className='todoapp'>
       <Todos todos={todos}
         onToggleCompletedTodo={handleCompleted}
-        onRemoveTodo={handleRemove} />
+        onRemoveTodo={handleRemove}
+      />
+      <Footer
+        activeCount={activeCount}
+        completedCount={todos.length - activeCount}
+        filterSelected={filterSelected}
+        onClearCompleted={() => { }}
+        handleFilterChange={handleFilterChange}
+      />
     </div>
   )
 }
